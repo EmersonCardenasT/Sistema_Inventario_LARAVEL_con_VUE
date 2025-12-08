@@ -41,6 +41,18 @@ const userProfileList = [
     href: '#',
   },
 ]
+
+const user = localStorage.getItem('user')
+  ? JSON.parse(localStorage.getItem('user'))
+  : null;
+const router = useRouter()
+const logout = async() => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    
+    await router.push({ name: 'login' })
+}
+
 </script>
 
 <template>
@@ -57,7 +69,7 @@ const userProfileList = [
       class="cursor-pointer"
       size="38"
     >
-      <VImg :src="avatar1" />
+      <VImg :src="user && user.avatar ? user.avatar : avatar1" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -68,17 +80,17 @@ const userProfileList = [
       >
         <VList>
           <VListItem class="px-4">
-            <div class="d-flex gap-x-2 align-center">
+            <div class="d-flex gap-x-2 align-center" v-if="user">
               <VAvatar>
-                <VImg :src="avatar1" />
+                <VImg :src="user.avatar ? user.avatar : avatar1" />
               </VAvatar>
 
               <div>
                 <div class="text-body-2 font-weight-medium text-high-emphasis">
-                  John Doe
+                  {{ user.full_name }}
                 </div>
                 <div class="text-capitalize text-caption text-disabled">
-                  Admin
+                  {{ user.role.name}}
                 </div>
               </div>
             </div>
@@ -126,7 +138,7 @@ const userProfileList = [
                 color="error"
                 size="small"
                 append-icon="ri-logout-box-r-line"
-                :to="{ name: 'login' }"
+                @click = "logout"
               >
                 Logout
               </VBtn>

@@ -22,6 +22,7 @@ const router = createRouter({
     
     return { top: 0 }
   },
+  // ESTA FUNCION SE ENCARGA DE DAR  LAS RUTAS QUE SE ENCUENTRAN DENTRO DE LA PAGIN PAGE
   extendRoutes: pages => [
     ...redirects,
     ...[

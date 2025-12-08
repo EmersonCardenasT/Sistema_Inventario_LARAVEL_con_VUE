@@ -1,5 +1,3 @@
-export const COOKIE_MAX_AGE_1_YEAR = 365 * 24 * 60 * 60
-
 export const PERMISOS = [
     {
         'name': 'Dashboard',
@@ -49,6 +47,10 @@ export const PERMISOS = [
             {
                 name: 'Eliminar',
                 permiso: 'delete_user',
+            },
+            {
+                name: 'Perfil de Usuario',
+                permiso: 'profile_user',
             }
         ]
     },

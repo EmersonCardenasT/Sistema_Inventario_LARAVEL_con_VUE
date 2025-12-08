@@ -3,16 +3,23 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+
+use App\Models\Config\Sucursale;
+use Carbon\Carbon;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; 
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    use HasRoles;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +29,15 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'surname',
+        'avatar',
+        'role_id',
+        'sucursale_id',
+        'phone',
+        'type_document',
+        'n_document',
+        'gender',
+        'state',
     ];
 
     /**
@@ -65,4 +81,30 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+        // Configuracion para registrar la hora de creacion y actualizacion
+    public function setCreatedAtAttribute($value)
+    {
+       date_default_timezone_set("America/Lima");
+       $this->attributes['created_at'] = Carbon::now();
+    }
+
+    public function setUpdatedAtAttribute($value)
+    {
+       date_default_timezone_set("America/Lima");
+       $this->attributes['updated_at'] = Carbon::now();
+    }
+
+    // El nombre de la funcion va el mismo en el mapeo
+    public function role()
+    {
+        return $this -> belongsTo(Role::class, "role_id");
+    }
+
+    // El nombre de la funcion va el mismo en el mapeo
+    public function sucursale()
+    {
+        return $this -> belongsTo(Sucursale::class, "sucursale_id");
+    }
+
 }

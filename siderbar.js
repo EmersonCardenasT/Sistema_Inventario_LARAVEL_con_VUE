@@ -1,18 +1,18 @@
 export default [
   {
     title: 'Dashboard',
-    to: { name: 'dashboard' },
+    to: { name: 'root' },
     icon: { icon: 'ri-pie-chart-box-line' },
   },
   { heading: 'Accesos' },
   {
     title: 'Roles y Permisos',
-    to: { name: 'roles_permisos' },
+    to: { name: 'second-page' },
     icon: { icon: 'ri-lock-password-line' },
   },
   {
     title: 'Usuarios',
-    to: { name: 'users' },
+    to: { name: 'second-page' },
     icon: { icon: 'ri-group-line' },
   },
   {
@@ -21,12 +21,12 @@ export default [
     children: [
       {
         title: 'Sucursales',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
         title: 'Almacenes',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
@@ -53,7 +53,7 @@ export default [
     children: [
       {
         title: 'Registrar',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
@@ -74,7 +74,7 @@ export default [
     children: [
       {
         title: 'Registrar',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
@@ -96,7 +96,7 @@ export default [
     children: [
       {
         title: 'Registrar',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-computer-line' },
       },
       {
@@ -112,7 +112,7 @@ export default [
     children: [
       {
         title: 'Registrar',
-        to: 'second-page',
+        to: 'dashboards-crm',
         icon: { icon: 'ri-computer-line' },
       },
       {

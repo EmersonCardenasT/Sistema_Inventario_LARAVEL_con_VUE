@@ -4,7 +4,7 @@
     <div class="d-flex align-center text-base">
       &copy;
       {{ new Date().getFullYear() }},
-      Made With
+      Made With Emerson
       <VIcon
         icon="ri-heart-fill"
         color="error"

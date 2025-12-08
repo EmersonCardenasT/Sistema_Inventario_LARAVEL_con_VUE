@@ -16,7 +16,42 @@ const form = ref({
   remember: false,
 })
 
-definePage({ meta: { layout: 'blank' } })
+const error_exits = ref(null);
+const success_exits = ref(null);
+const route = useRoute();
+const router = useRouter();
+
+const login = async () => {
+  try{
+    error_exits.value = null;
+    success_exits.value = null;
+    // MATERIALIZE NOS PROPORICIONA UNA VARIABLE GLOBAL $api
+    const resp = await $api('auth/login', {
+      method: 'POST',
+      body: {
+        email: form.value.email,
+        password: form.value.password,
+      },
+      onResponseError({response}){
+        console.log(response);  
+        error_exits.value = response._data.error;
+      }
+    });
+
+    console.log(resp);
+    localStorage.setItem("token", resp.access_token);
+    localStorage.setItem("user", JSON.stringify(resp.user));
+    success_exits.value = 1;
+    await nextTick(() => {
+      router.replace(route.query.to ? String(route.query.to) : '/')
+    })
+  }catch(error){
+    console.log(error);
+  }
+}
+
+// SOLO POR EL ORDEN DE unauthenticatedOnly ME ESTRESE PORQUE NO LO PUSE EN EL ORDEN CORRECTO
+definePage({ meta: { layout: 'blank', unauthenticatedOnly: true }})
 
 const isPasswordVisible = ref(false)
 const authV2LoginMask = useGenerateImageVariant(authV2LoginMaskLight, authV2LoginMaskDark)
@@ -76,7 +111,7 @@ const authV2LoginIllustration = useGenerateImageVariant(authV2LoginIllustrationL
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="() => {}">
+          <VForm @submit.prevent="login">
             <VRow>
               <!-- email -->
               <VCol cols="12">
@@ -100,6 +135,28 @@ const authV2LoginIllustration = useGenerateImageVariant(authV2LoginIllustrationL
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
 
+                <VAlert
+                  class="my-2"
+                  variant="tonal"
+                  border="top"
+                  type="error"
+                  closable
+                  v-if="error_exits"
+                >
+                  No se puede iniciar Sesion intente cambiar las credenciales
+                </VAlert>
+                
+                <VAlert
+                  class="my-2"
+                  variant="tonal"
+                  border="top"
+                  type="success"
+                  closable
+                  v-if="success_exits"
+                >
+                  Las credenciales son correctas, puede iniciar sesion
+                </VAlert>
+
                 <!-- remember me checkbox -->
                 <div class="d-flex align-center justify-space-between flex-wrap my-6 gap-x-2">
                   <VCheckbox
@@ -117,6 +174,7 @@ const authV2LoginIllustration = useGenerateImageVariant(authV2LoginIllustrationL
 
                 <!-- login button -->
                 <VBtn
+                  class="my-2"
                   block
                   type="submit"
                 >

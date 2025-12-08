@@ -2,9 +2,10 @@
   
 namespace App\Http\Controllers;
   
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Validator;
+use App\Models\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
   
   
 class AuthController extends Controller
@@ -16,10 +17,11 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register() {
+        Gate::authorize('publish', User::class);
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:8',
+            'password' => 'required|min:8',
         ]);
   
         if($validator->fails()){
@@ -96,7 +98,16 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            "user" => [
+                "full_name" => auth()->user()->name . ' '. auth()->user()->surname,
+                "email" => auth()->user()->email,
+                "avatar" => auth()->user()->avatar ? env("APP_URL")."/storage/".auth()->user()->avatar : NULL,
+                "role" => [
+                    "id" => auth()->user()->role->id,
+                    "name" => auth()->user()->role->name,
+                ]
+            ]
         ]);
     }
 }
