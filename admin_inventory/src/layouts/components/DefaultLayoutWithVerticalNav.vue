@@ -11,6 +11,7 @@ import NavBarI18n from '@core/components/I18n.vue'
 
 // @layouts plugin
 import { VerticalNavLayout } from '@layouts'
+import { onMounted } from 'vue'
 
 // SECTION: Loading Indicator
 const isFallbackStateActive = ref(false)
@@ -41,10 +42,74 @@ watch([
   else
     verticalNavHeaderActionAnimationName.value = val[0] ? 'rotate-180' : 'rotate-back-180'
 }, { immediate: true })
+
+const navItemsV = ref([]);
+
+onMounted(() => {
+  let USER = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  if (USER) {
+    // LA LISTA DE PERMISOS DEL USUARIO AUTENTICADO
+    let permissions = USER.permissions;
+    navItems.forEach((nav) => {
+      // SI EL USUARIO ES SUPERADMIN ENTONCES TENDRA ACCESO A  TODO
+      if(USER.role.name == 'Super-Admin'){
+        navItemsV.value.push(nav);
+      }else{
+        // LOS NAV QUE TENGAN EL PERMISO ALL PUEDE SER VISTO POR CUALQUIER USUARIO
+        if(nav.permission == 'all'){
+          navItemsV.value.push(nav);
+        }
+
+        if(nav.heading){
+          // EJEMPLO
+          // ['pera', 'manzana', 'uva', 'naranja', 'fresa', 'mango'];
+          // ['durazno'].filter((fruta) => {
+          //   if(['pera', 'manzana', 'uva', 'naranja', 'fresa', 'mango'].includes(fruta)){
+          //     return true;
+          //   }
+          //   return false;
+          // })
+          let headingF = nav.permissions.filter((permission) => {
+            if(permissions.includes(permission)){
+              return true;
+            }
+            return false;
+          })
+          if(headingF.length > 0) {
+            navItemsV.value.push(nav);
+          }
+        }
+
+        if(nav.children){
+          let navT = nav;
+          // FILTRAREMOS LOS SUBMENU O CHILDREN PARA VALIDAR SI PUEDEN SER VISTO POR EL USUARIO AUTENTICADO
+          let newChildren = nav.children.filter((subnav) => {
+            if(permissions.includes(subnav.permission)){
+              return true;
+            }
+            return false;
+
+          })
+          if(newChildren.length > 0){
+            navT.children = newChildren;
+            navItemsV.value.push(navT);
+          }
+        }else{
+          // VERIFICAR SI LOS PERMISOS DEL USUARIO AUTENTICAOD PUEDEN VER EL NAV INDIVIDUAL
+          if(permissions.includes(nav.permission)){
+            navItemsV.value.push(nav);
+          }
+        }
+
+      }
+    })
+  }
+})
+
 </script>
 
 <template>
-  <VerticalNavLayout :nav-items="navItems">
+  <VerticalNavLayout :nav-items="navItemsV">
     <!-- 👉 navbar -->
     <template #navbar="{ toggleVerticalOverlayNavActive }">
       <div class="d-flex h-100 align-center">

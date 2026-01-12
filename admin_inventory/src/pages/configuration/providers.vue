@@ -5,102 +5,83 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
     const headers = [
         { title: 'ID', key: 'id' },
         { title: 'Nombre Completo', key: 'full_name' },
+        { title: 'RUC', key: 'ruc' },
         { title: 'Email', key: 'email' },
-        { title: 'User', key: 'user' },
-        { title: 'Sucursal', key: 'sucursale' },
         { title: 'Telefono', key: 'phone' },
         { title: 'Estado', key: 'state' },
+        // { title: 'Direccion', key: 'address' },
         { title: 'Fecha de Registro', key: 'created_at' },
         { title: 'Action', key: 'action' },
         ]
 
-    const isUserAddDialogVisible = ref(false);
-    const isUserEditDialogVisible = ref(false);
-    const isUserDeleteDialogVisible = ref(false);
+    const isProviderAddDialogVisible = ref(false);
+    const isProviderEditDialogVisible = ref(false);
+    const isProviderDeleteDialogVisible = ref(false);
 
-    const list_users = ref([]);
-    const sucursales = ref([]);
-    const roles = ref([]);
+    const list_providers = ref([]);
     const searchQuery = ref(null);
-    const user_selected_edit = ref(null);
-    const user_selected_delete = ref(null);
+    const provider_selected_edit = ref(null);
+    const provider_selected_delete = ref(null);
 
     const list = async () => {
         try {
-            const resp = await $api("users?search=" + (searchQuery.value ? searchQuery.value : ''), {
+            const resp = await $api("providers?search=" + (searchQuery.value ? searchQuery.value : ''), {
             method: "GET",
             onReponseError({response}){
                 console.log(response._data.error);
             }
             })
             console.log(resp);
-            list_users.value = resp.users;
+            list_providers.value = resp.providers;
         } catch (error) {
             console.log(error);
         }
     }
 
-    // CON ESTO VAMOS A LISTAR LOS DATOS DE LA FUNCION CONFIG 
-    const config = async () => {
-        try {
-            const resp = await $api("users/config", {
-                method: "GET",
-                onReponseError({response}){
-                    console.log(response._data.error);
-                }
-            })
-            console.log(resp);
-            sucursales.value = resp.sucursales;
-            roles.value = resp.roles;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const addNewUser = (NewUser) => {
-        console.log(NewUser);
-        let backup = list_users.value;
-        list_users.value = [];
-        backup.unshift(NewUser);
+    const addNewProvider = (NewProvider) => {
+        console.log(NewProvider);
+        let backup = list_providers.value;
+        list_providers.value = [];
+        backup.unshift(NewProvider);
         setTimeout(() => {
-            list_users.value = backup;
+            list_providers.value = backup;
         }, 50);
     }
 
-    const addEditUser = (editUser) => {
-        console.log(editUser);
-        let backup = list_users.value;
-        list_users.value = [];
-        let INDEX = backup.findIndex((rol) => rol.id == editUser.id);
+    const addEditProvider = (editProvider) => {
+        console.log(editProvider);
+        let backup = list_providers.value;
+        list_providers.value = [];
+        let INDEX = backup.findIndex((prov) => prov.id == editProvider.id);
         if(INDEX != -1){
-            backup[INDEX] = editUser;
+            backup[INDEX] = editProvider;
         }
         setTimeout(() => {
-            list_users.value = backup;
+            list_providers.value = backup;
         }, 50);
     }
 
-    const addDeleteUser = (User) => {
-        console.log(User);
-        let backup = list_users.value;
-        list_users.value = [];
-        let INDEX = backup.findIndex((rol) => rol.id == User.id);
+    const addDeleteProvider = (Provider) => {
+        console.log(Provider);
+        let backup = list_providers.value;
+        list_providers.value = [];
+        let INDEX = backup.findIndex((prov) => prov.id == Provider.id);
         if(INDEX != -1){
             backup.splice(INDEX,1);
         }
         setTimeout(() => {
-            list_users.value = backup;
+            list_providers.value = backup;
         }, 50);
     }
     
     const editItem = (item) => {
         console.log(item);
-        isUserEditDialogVisible.value = true;
-        user_selected_edit.value = item;
+        isProviderEditDialogVisible.value = true;
+        provider_selected_edit.value = item;
     }
     const deleteItem = (item) => {
-        isUserDeleteDialogVisible.value = true;
-        user_selected_delete.value = item;
+        isProviderDeleteDialogVisible.value = true;
+        provider_selected_delete.value = item;
     }
 
     const avatarText = value => {
@@ -114,22 +95,21 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
     // ESTE EVENTO SE EJECUTA ANTES QUE SE RENDERIZE TODO EL CONTENIDO,
     // OUNMOUNTED ES PARTE DE VUE
     onMounted(() => {
-        config();
         list();
     });
 
-    definePage({ meta: { permission: 'list_user' }});
+    definePage({ meta: { permission: 'settings' }});
 
 </script>
 <template>
     <div>
 
-        <VCard title="👦 Usuarios">
+        <VCard title="🏢 Proveedores">
             <VCardText>
                 <VRow class="justify-space-between">
                     <VCol cols="4">
                         <VTextField
-                        placeholder="Search User"
+                        placeholder="Search Provider"
                         density="compact"
                         class="me-3"
                         v-model = "searchQuery"
@@ -137,8 +117,8 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
                         />
                     </VCol>
                     <VCol cols="3" class="text-end">
-                        <VBtn @click="isUserAddDialogVisible = !isUserAddDialogVisible">
-                            Add User 
+                        <VBtn @click="isProviderAddDialogVisible = !isProviderAddDialogVisible">
+                            Add Provider 
                             <VIcon end icon="ri-add-line" />
                         </VBtn>
                     </VCol>
@@ -146,7 +126,7 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
             </VCardText>
             <VDataTable
                 :headers="headers"
-                :items="list_users"
+                :items="list_providers"
                 :items-per-page="5"
                 class="text-no-wrap"
             >
@@ -158,13 +138,13 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
                      <div class="d-flex align-center">
                          <VAvatar
                                  size="32"
-                                 :color="item.avatar ? '' : 'primary'"
-                                 :class="item.avatar ? '' : 'v-avatar-light-bg primary--text'"
-                                 :variant="!item.avatar ? 'tonal' : undefined"
+                                 :color="item.imagen ? '' : 'primary'"
+                                 :class="item.imagen ? '' : 'v-avatar-light-bg primary--text'"
+                                 :variant="!item.imagen ? 'tonal' : undefined"
                              >
                              <VImg
-                                 v-if="item.avatar"
-                                 :src="item.avatar"
+                                 v-if="item.imagen"
+                                 :src="item.imagen"
                              />
                              <span
                                  v-else
@@ -176,12 +156,6 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
                             <!-- <small>{{ item.post }}</small> -->
                         </div>
                      </div>
-                </template>
-                <template #item.role="{ item }">
-                    <span class="text-h6">{{ item.role.name }}</span>
-                </template>
-                <template #item.sucursale="{ item }">
-                    <span class="text-h6">{{ item.sucursale.name }}</span>
                 </template>
 
                 <template #item.state="{ item }">
@@ -213,9 +187,9 @@ import RoleEditDialog from "../../components/inventory/role/RoleEditDialog.vue";
             </VDataTable>
         </VCard>
 
-        <UserAddDialog v-model:isDialogVisible="isUserAddDialogVisible" :sucursales="sucursales" :roles="roles" @addUser="addNewUser"></UserAddDialog>
-        <UserEditDialog v-if="user_selected_edit && isUserEditDialogVisible" :sucursales="sucursales" :roles="roles" v-model:isDialogVisible="isUserEditDialogVisible" :selectedUser="user_selected_edit" @editUser="addEditUser"></UserEditDialog>        
-        <UserDeleteDialog v-if="user_selected_delete && isUserDeleteDialogVisible" v-model:isDialogVisible="isUserDeleteDialogVisible" :userSelected="user_selected_delete" @deleteUser="addDeleteUser"></UserDeleteDialog>        
+        <ProviderAddDialog v-model:isDialogVisible="isProviderAddDialogVisible" @addProvider="addNewProvider"></ProviderAddDialog>
+        <ProviderEditDialog v-if="provider_selected_edit && isProviderEditDialogVisible" v-model:isDialogVisible="isProviderEditDialogVisible" :providerSelected="provider_selected_edit" @editProvider="addEditProvider"></ProviderEditDialog>        
+        <ProviderDeleteDialog v-if="provider_selected_delete && isProviderDeleteDialogVisible" v-model:isDialogVisible="isProviderDeleteDialogVisible" :providerSelected="provider_selected_delete" @deleteProvider="addDeleteProvider"></ProviderDeleteDialog>        
 
     </div>
 </template>

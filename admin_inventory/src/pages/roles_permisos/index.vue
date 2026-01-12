@@ -85,6 +85,9 @@ import RoleAddDialog from "../../components/inventory/role/RoleAddDialog.vue";
     onMounted(() => {
         list();
     })
+
+    definePage({ meta: { permission: 'list_role' }});
+    
 </script>
 <template>
     <div>

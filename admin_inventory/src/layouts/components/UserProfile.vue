@@ -50,7 +50,8 @@ const logout = async() => {
     localStorage.removeItem('user')
     localStorage.removeItem('token')
     
-    await router.push({ name: 'login' })
+    // await router.push({ name: 'login' })
+    window.location.reload();
 }
 
 </script>

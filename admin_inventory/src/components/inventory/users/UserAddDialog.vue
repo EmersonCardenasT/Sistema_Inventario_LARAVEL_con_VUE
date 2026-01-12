@@ -108,10 +108,10 @@ const store = async () => {
   formData.append('imagen', FILE_AVATAR.value);
   formData.append('state',1);
 
-  if (!type_document.value) {
+  if (type_document.value) {
     formData.append('type_document', type_document.value);
   }
-  if (!n_document.value) {
+  if (n_document.value) {
     formData.append('n_document', n_document.value);
   }
 
@@ -248,6 +248,7 @@ const dialogVisibleUpdate = val => {
             <VCol
               cols="6"
             >
+            // CORREGIR ESTO
               <VSelect
                     :items="[
                         'DNI',

@@ -116,10 +116,10 @@ const update = async () => {
   }
   formData.append('phone', phone.value);
   formData.append('state', state.value);
-  if (!type_document.value) {
+  if (type_document.value) {
     formData.append('type_document', type_document.value);
   }
-  if (!n_document.value) {
+  if (n_document.value) {
     formData.append('n_document', n_document.value);
   }
 
@@ -336,7 +336,7 @@ onMounted(() => {
                         },
                     ]"
                     item-title="name"
-                    item-value="id"
+                    item-value="value"
                     v-model="state"
                     label="Estado"
                     placeholder="Select Item"
